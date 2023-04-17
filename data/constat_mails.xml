@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="0">
+        <record id="mail_constat_type_fort" model="mail.template">
+            <field name="name">Creation d'un constat type fort</field>
+            <field name="model_id" ref="Plan-d-amelioration.model_pdca_constat"/>
+            <field name="subject">Creation d'un constat Type Fort</field>
+            <field name="email_from">${user.email}</field>
+            <field name="email_to">${object.pass_dir_pilote_emails()}</field>
+            <field name="body_html" type="html">
+                <h3>Nouveau Constat de Type Point Fort</h3>  
+                    <table border="0" cellpadding="0" cellspacing="0" width="590" style="padding: 16px; background-color: white; color: #454748; border-collapse:separate;">
+                        <tbody>     
+                            <tr>
+                                <td align="center" style="min-width: 590px;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
+                                        <tr><td valign="top" style="font-size: 20px;">
+                                            <div>
+                                                Bonjour <br/>
+                                                Un nouveau constat de Type fort a ete cree 
+                                                <br/>
+                                                <div style="margin: 16px 0px 16px 0px;">
+                                                    <a href="${object.creer_constat_url()}"
+                                                        style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:25px;">
+                                                        voir le constat
+                                                    </a>
+                                                </div>
+                                               <br/><br/>
+                                               
+                                            </div>
+                                        </td></tr>
+                                        <tr><td style="text-align:center;">
+                                        <hr width="100%" style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;"/>
+                                        </td></tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>  
+            </field>
+        </record>
+
+        <record id="constat_supprime_template" model="mail.template">
+            <field name="name">Suppression d'un constat</field>
+            <field name="model_id" ref="Plan-d-amelioration.model_pdca_constat"/>
+            <field name="subject">Constat SUpprime</field>
+            <field name="email_from">${user.email}</field>
+            <field name="email_to">${object.create_uid.email}</field>
+            <field name="body_html" type="html">
+                <h3></h3>  
+                    <table border="0" cellpadding="0" cellspacing="0" width="590" style="padding: 16px; background-color: white; color: #454748; border-collapse:separate;">
+                        <tbody>     
+                            <tr>
+                                <td align="center" style="min-width: 590px;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="590" style="min-width: 590px; background-color: white; padding: 0px 8px 0px 8px; border-collapse:separate;">
+                                        <tr><td valign="top" style="font-size: 20px;">
+                                            <div>
+                                                Bonjour <br/>
+                                                Le Constat suivant a ete Supprimee:
+                                                ${object.name}
+                                                <br/>
+                                                <div style="margin: 16px 0px 16px 0px;">
+                                                    <a href="${object.creer_constat_url()}"
+                                                        style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:25px;">
+                                                        voir le constat Supprimee
+                                                    </a>
+                                                </div>
+                                               <br/><br/>
+                                               
+                                            </div>
+                                        </td></tr>
+                                        <tr><td style="text-align:center;">
+                                        <hr width="100%" style="background-color:rgb(204,204,204);border:medium none;clear:both;display:block;font-size:0px;min-height:1px;line-height:0; margin: 16px 0px 16px 0px;"/>
+                                        </td></tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>  
+            </field>
+        </record>
+
+    </data>
+</odoo>

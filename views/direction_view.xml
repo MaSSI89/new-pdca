@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="pdca_direction_view_form" model="ir.ui.view">
+        <field name="name">pdca.direction.view.form</field>
+        <field name="model">pdca.direction</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="cree_le" />
+                    </group>
+                    <group >
+                        <field name="directeur"/>
+                        <field name="referent" />
+                        <field name="unite_ids">
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="pdca_direction_view_tree" model="ir.ui.view">
+        <field name="name">pdca.direction.view.tree</field>
+        <field name="model">pdca.direction</field>
+        <field name="arch" type="xml">
+            <tree string="">
+                <field name="name" />
+                <field name="directeur" />
+                <field name="referent" />
+                <field name="cree_le" />
+                <field name="unite_ids" />
+                <field name="action_ids" />
+                <field name="employe_ids" />
+            </tree>
+        </field>
+    </record>
+    
+    <record id="pdca_direction_action" model="ir.actions.act_window">
+        <field name="name">Directions</field>
+        <field name="res_model">pdca.direction</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="pdca_root_menu" name="Plan Damelioration" sequence="10"/>
+    <menuitem id="pdca_administration_menu" name="Administration" sequence="10" parent="pdca_root_menu"/>
+
+    <menuitem id="pdca_direction_menu" name="Directions"
+                 action="pdca_direction_action" parent="pdca_administration_menu" sequence="10"/>
+
+
+</odoo>
