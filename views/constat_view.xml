@@ -9,6 +9,7 @@
                 <header>
                     <button name="affecter_pilote" type="object" string="Affecter un pilote" class="btn-success"/>
                     <button name="supprimer_constat" type="object" string="Supprimer  le constat" class="btn-danger"/>
+                    <button name="emails" type="object" string="NV ACTION AFFECTATION" class="btn-secondary" />
                     <field name="status" widget="statusbar" statusbar_visible="ouvert,encours,traite,solde" type="object"/>
                 </header>
                 
@@ -38,7 +39,7 @@
                         <field name="genere_action" />
                     </group>
                     <group >
-                        <field name="status" />
+                        <!-- <field name="status" /> -->
                     </group>
                 </sheet>
             </form>

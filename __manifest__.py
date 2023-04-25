@@ -35,9 +35,10 @@
         'views/action_view.xml',
         'views/affectation_pilote_view.xml',
         'views/employe_view.xml',
-        'data/mail-template.xml',
         'data/constat_sequence.xml',
-        'data/constat_mails.xml'
+        'data/constat_mails.xml',
+        'data/action_mails.xml',
+        'data/affectation_pilote_mails.xml',
 
     ],
     # only loaded in demonstration mode

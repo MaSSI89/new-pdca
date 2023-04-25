@@ -15,7 +15,8 @@
                 </header>
                 <sheet>
                     <group>
-                        <field name="constat_id" readonly="1" options="{'no_open': True}"/>                        
+                        <field name="constat_id" readonly="1" options="{'no_open': True}"/>  
+                        <field name="direction_id" readonly="1" options="{'no_open': True}" />                      
                         <field name="pilote_id" readonly="1" options="{'no_open': True}" />
                     </group>
                     <group>

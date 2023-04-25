@@ -7,25 +7,36 @@ class AffectationPilote(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     origine_constat = fields.Char('Origine')
     type_constat = fields.Char('Type Constat')
+    direction_pilote_id = fields.Many2one('pdca.direction','Direction Pilote')
     pilote_id = fields.Many2one('pdca.employe',"Pilote d'action")
     constat_id=fields.Many2one('pdca.constat','Constat')
-    action_id=fields.Many2one('pdca.action','Action',
-    domain=[('constat_id','=',constat_id)]
-    )
-    direction_pilote_id = fields.Many2one('pdca.direction','Direction Pilote')
+    action_id=fields.Many2one('pdca.action','Action')
     
-    def ajouter_action(self): 
-        self.constat_id.status='encours'
-        return {
-            'res_model': 'pdca.action',
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'view_id': self.env.ref('Plan-d-amelioration.pdca_action_view_form').id,
-            'context': {'default_pilote_id': self.pilote_id.id,
-                        'default_constat_id':self.constat_id.id,
-                        'default_direction_id': self.direction_pilote_id
-                        }
-        }
+    @api.model
+    def write(self, vals, *args):
+        # print(*args)
+        print(vals)
+        print(self)
+        if not self.pilote_id :
+            return
+        
+        record =  super(AffectationPilote, self).write(*args)
+        print(record)
+        self.send_mail_notif()
+        return record
+
+    # def ajouter_action(self): 
+    #     self.constat_id.status='encours'
+    #     return {
+    #         'res_model': 'pdca.action',
+    #         'type': 'ir.actions.act_window',
+    #         'view_mode': 'form',
+    #         'view_id': self.env.ref('Plan-d-amelioration.pdca_action_view_form').id,
+    #         'context': {'default_pilote_id': self.pilote_id.id,
+    #                     'default_constat_id':self.constat_id.id,
+    #                     'default_direction_id': self.direction_pilote_id
+    #                     }
+    #     }
     
     # def creer_taux_avancement_constat_url(self):
     #     base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
@@ -68,10 +79,12 @@ class AffectationPilote(models.Model):
     @api.model
     def create(self, vals):
         record = super(AffectationPilote, self).create(vals)
+        print('-----------invoked mailing affectaiton pilote---')
         record.send_mail_notif()
+        print('----------sent-----------')
         return record
     
-    @api.onchange('direction_pilote_id')
-    def load_pilotes_direction(self):
-            pilotes_ids = [('direction_id','=',self.direction_pilote_id.id)]
-            return {'domain': {'pilote_id': pilotes_ids}}
+    # @api.onchange('direction_pilote_id')
+    # def load_pilotes_direction(self):
+    #         pilotes_ids = [('direction_id','=',self.direction_pilote_id.id)]
+    #         return {'domain': {'pilote_id': pilotes_ids}}

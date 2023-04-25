@@ -3,6 +3,7 @@ import logging
 
 
 
+
 class Constat(models.Model):
     _name = "pdca.constat"
     _description = "Constats"
@@ -64,23 +65,28 @@ class Constat(models.Model):
                             ('auditCertification', 'Audit de certification')],'Origine')
     
 
-    def affecter_pilote(self):
+    def affecter_pilote(self, **kwargs):
+        constat_concerne = self.id
+        print(constat_concerne)
+
         user = self.env.user
         current_user = self.env['pdca.employe'].search([('user_id','=',user.id)])
         direction = current_user.direction_id.id
 
+        domain = ['&',('direction_pilote_id','=',direction),('constat_id','=',constat_concerne)]
+        affectation = self.env['pdca.affectation_pilote'].search(domain)
+        print('-------------------')
+        print(affectation)
+        print(affectation.id)
+        print('-------------------')
         return {
-            'res_model': 'pdca.affectation_pilote',
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'view_id': self.env.ref('Plan-d-amelioration.affectation_pilote_view_form').id,
-            'context': {
-                        'default_constat_id': self.id,
-                         'default_direction_pilote_id': direction,
-                        'default_origine_constat': self.origine,
-                        'default_type_constat': self.type_constat,
-                    }               
-            }
+            'type': 'ir.actions.act_url',
+            'url': '/web#id=%d&action=163&model=pdca.affectation_pilote&view_type=form&cids=1&menu_id=153' % (affectation),
+            'target': 'self',
+        }
+
+                
+            
 
     
     
@@ -131,9 +137,40 @@ class Constat(models.Model):
             if not vals['genere_action']:
                 record.send_mail_constat_fort()
                 return record
-            
+        # print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55')
+        # # print('0000000000000000000', self.direction_pilote)
+        # print('0000000000000000000', vals['direction_pilote'])
+        # print('--------------', record.direction_pilote.ids)
+
+        for rec in vals['direction_pilote'][0][2]:
+            # print('************************************')
+            # print(rec)
+            affectation_pilote = {
+                'constat_id': record.id,
+                'direction_pilote_id': rec,
+                'origine_constat': self.origine,
+                'type_constat': self.type_constat, 
+            }
+            affectation_record = self.env['pdca.affectation_pilote'].create(affectation_pilote)
+            # affectation_pilote.send_mail_notif
+            action = {
+                'direction_id': rec,
+                'constat_id': record.id
+            }
+           
+            # print ('--------------------')
+            print(affectation_record)
+            action_record = self.env['pdca.action'].create(action)
+            print(action_record)
+            # print ('--------------------')
+
         record.send_mail_notif()
         return record
+    
+    def emails(self):
+        # print(self.direction_pilote.ids)
+        for rec in self.direction_pilote:
+            print (rec.id)
     
     @api.onchange('direction_pilote')
     def change_activite(self):

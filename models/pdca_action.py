@@ -84,18 +84,18 @@ class Action(models.Model):
     @api.model
     def create(self, values):
         result = super().create(values)
-        result.status='enattentevalidation'
+        result.status='nonentamne'
 
-        if result.constat_id and result.id not in result.constat_id.action_ids.ids:
-            result.constat_id.write({'action_ids':[(4,result.id)]})
-        template = 'Plan-d-amelioration.action_definie_template'            
-        result.send_mail_notifiction(template, self.constat_id.create_uid.email)
+        # if result.constat_id and result.id not in result.constat_id.action_ids.ids:
+        #     result.constat_id.write({'action_ids':[(4,result.id)]})
+        # template = 'Plan-d-amelioration.action_definie_template'            
+        # result.send_mail_notifiction(template, self.constat_id.create_uid.email)
         return result
     
     def write(self, values):
         res = super().write(values)
         template = 'Plan-d-amelioration.action_definie_template'
-        self.send_mail_notifiction(template, self.constat_id.create_uid.email)
+        # self.send_mail_notifiction(template, self.constat_id.create_uid.email)
         return res
     
  

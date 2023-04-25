@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <form string="">
                 <header>
-                    <button name="ajouter_action" type="object" string="Definir une action" 
-                    />
+                    <!-- <button name="ajouter_action" type="object" string="Definir une action"  -->
+                    <!-- /> -->
                     <!-- <button name="update_action" type="object" string="Renseigner taux d'avancement"/> -->
                 </header>
                 <sheet>
@@ -17,7 +17,7 @@
                         <field name="origine_constat" readonly="1"/>
                         <field name="type_constat" readonly="1" />
                         <field name="direction_pilote_id" readonly="1" options="{'no_open':True, 'no_create':True}" />
-                        <field name="pilote_id" options="{'no_create': True}"/>
+                        <field name="pilote_id" options="{'no_create': True}" domain="[('direction_id','=',direction_pilote_id)]"/>
                         
                     </group>
                     <group>
