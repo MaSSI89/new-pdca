@@ -7,9 +7,9 @@
         <field name="arch" type="xml">
             <form string="">
                 <header>
-                    <button name="redefinir_action" type="object" string="Action a redefinir"/>
-                    <button name="valider_action" type="object" string="Valider l'action" class="btn-success"/>
-                    <button name="approuver_action" type="object" string="Approuver l'action" class="btn-warning"/>
+                    <button name="redefinir_action" type="object" string="Action a redefinir"  />
+                    <button name="valider_action" type="object" string="Valider l'action" class="btn-success"  />
+                    <button name="approuver_action" type="object" string="Approuver l'action" class="btn-warning"  />
                     <button name="incrementer_taux_avancement" type="object" string="Incrementer Taux Avancement avec 10%" class="btn-outline-info"  />
                     <field name="status" widget="statusbar" statusbar_visible="nonentamne,endefinition,enattentevalidation,encours,enattenteaproba,approuve,realise,solde" type="object"/>
                 </header>
@@ -33,7 +33,8 @@
                         <field name="taux_avancement" readonly="1" widget="progressbar"/>
                     </group>
                     <group >
-                        <field name="motif_rejet"/>
+                        <!-- motif rejet field should be invisible at first the administrateur has the right to define it -->
+                        <field name="motif_rejet" attrs="{'invisible': [('motif_rejet','=', False)]}" />
                     </group>
                 </sheet>
             </form>

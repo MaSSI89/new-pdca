@@ -1,9 +1,6 @@
 from odoo import fields, models,api,_
 import logging
 
-
-
-
 class Constat(models.Model):
     _name = "pdca.constat"
     _description = "Constats"
@@ -19,7 +16,7 @@ class Constat(models.Model):
     processus = fields.Many2many('pdca.processus',string='Processus',domain="[('unite','=',activite)]")
     direction_pilote = fields.Many2many('pdca.direction',string="Direction Pilote")
     action_ids=fields.One2many('pdca.action','constat_id','Actions')
-
+    # search_ids = fields.Char(compute="_compute_search_ids", search='search_ids_search')
     status = fields.Selection([('ouvert','Ouvert'),
                                ('encours','En cours'),
                                ('traite','Traite'),
@@ -63,36 +60,50 @@ class Constat(models.Model):
                             ('riskManagement', 'Risk management'),
                             ('conformite', 'Conformité légale'),
                             ('auditCertification', 'Audit de certification')],'Origine')
-    
+    affectations_ids = fields.One2many('pdca.affectation_pilote','constat_id', 'Affectations')
 
-    def affecter_pilote(self, **kwargs):
+    # @api.depends('direction_pilote')
+    # def _compute_search_ids(self):
+        # print('computtttttttttttttttting')
+# 
+    # def search_ids_search(self, operator, operan):
+        # user = self.env.user
+        # user_direction = self.env['pdca.employe'].search([('user_id','=',user.id)])
+        # direction = user_direction.direction_id.id
+        # print(direction)
+        # obj = self.env['pdca.constat'].search([(('direction_pilote','=',direction))]).ids
+        # return [('direction_pilote','in',obj)]
+    # 
+    def get_affectation_pilote(self, affectation_id):
+        return {
+            'name': 'Affectation Pilote',
+            'type': 'ir.actions.act_window',
+            'res_model': 'pdca.affectation_pilote', 
+            'res_id': affectation_id,
+            'view_mode': 'form',
+            'target': 'new',
+        }
+
+    def affecter_pilote(self):
         constat_concerne = self.id
-        print(constat_concerne)
 
         user = self.env.user
         current_user = self.env['pdca.employe'].search([('user_id','=',user.id)])
         direction = current_user.direction_id.id
-
-        domain = ['&',('direction_pilote_id','=',direction),('constat_id','=',constat_concerne)]
+        domain = [('constat_id','=',constat_concerne)]
+        # aff = self.env['pdca.affectation_pilote'].search([('constat_id','=',constat_concerne)])
         affectation = self.env['pdca.affectation_pilote'].search(domain)
-        print('-------------------')
-        print(affectation)
-        print(affectation.id)
-        print('-------------------')
-        return {
-            'type': 'ir.actions.act_url',
-            'url': '/web#id=%d&action=163&model=pdca.affectation_pilote&view_type=form&cids=1&menu_id=153' % (affectation),
-            'target': 'self',
-        }
+        # affectation = self.env['pdca.affectation_pilote'].search(domain)   
+        # affectation.action_id.status  = 'endefinition'
+        for aff in affectation:
+            affectation_window = self.get_affectation_pilote(aff.id)
+            return affectation_window
 
+        return
                 
-            
-
-    
-    
     def creer_constat_url(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        constat_form_url = '/web#id=%d&action=159&model=pdca.constat&view_type=form&cids=&menu_id=153' % self.id
+        constat_form_url = '/web#id=%d&action=167&model=pdca.constat&view_type=form&cids=&menu_id=153' % self.id
         return base_url + constat_form_url
     
     def pass_dir_pilote_emails(self):
@@ -100,19 +111,29 @@ class Constat(models.Model):
         dir_pilote_records=self.env['pdca.direction'].search([('id','in',dir_pilote_ids)])
         personnes_concernes=''
         for dir_pilote in dir_pilote_records:
-            if dir_pilote.directeur.email not in personnes_concernes:
-                personnes_concernes+=dir_pilote.directeur.email+','
-            if dir_pilote.referent.email not in personnes_concernes:
-                personnes_concernes += dir_pilote.referent.email + ','
+            email_directeur = dir_pilote.directeur.email
+            if isinstance(email_directeur, str) and len(email_directeur) > 0:
+                if email_directeur not in personnes_concernes:
+                    personnes_concernes+=dir_pilote.directeur.email+','
+            email_referent = dir_pilote.referent.email
+            if isinstance(email_referent, str) and len(email_referent) > 0:
+                if dir_pilote.referent.email not in personnes_concernes:
+                    personnes_concernes += dir_pilote.referent.email + ','
         personnes = personnes_concernes.rstrip(",")
         return personnes
 
-    def send_mail_notif(self):
-        template_id = self.env.ref('Plan-d-amelioration.creation_constat_template')
+    # def send_mail_notif(self):
+    #     template_id = self.env.ref('Plan-d-amelioration.creation_constat_template')
+    #     for rec in self:
+    #         self.creer_constat_url()
+    #         template_id.send_mail(rec.id, force_send=True)
+    #     return
+    
+    def send_creation_constat_mail(self, template,emails):
+        template_id = self.env.ref(template)
         for rec in self:
-            self.creer_constat_url()
-            template_id.send_mail(rec.id, force_send=True)
-        return
+            self.get_affectation_pilote_url()
+
     
     def send_mail_constat_fort(self):
         template_id = self.env.ref('Plan-d-amelioration.constat_type_fort_mail')
@@ -137,40 +158,48 @@ class Constat(models.Model):
             if not vals['genere_action']:
                 record.send_mail_constat_fort()
                 return record
-        # print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55')
-        # # print('0000000000000000000', self.direction_pilote)
-        # print('0000000000000000000', vals['direction_pilote'])
-        # print('--------------', record.direction_pilote.ids)
-
+        
         for rec in vals['direction_pilote'][0][2]:
             # print('************************************')
             # print(rec)
-            affectation_pilote = {
-                'constat_id': record.id,
-                'direction_pilote_id': rec,
-                'origine_constat': self.origine,
-                'type_constat': self.type_constat, 
-            }
-            affectation_record = self.env['pdca.affectation_pilote'].create(affectation_pilote)
-            # affectation_pilote.send_mail_notif
             action = {
                 'direction_id': rec,
                 'constat_id': record.id
             }
-           
-            # print ('--------------------')
-            print(affectation_record)
             action_record = self.env['pdca.action'].create(action)
             print(action_record)
-            # print ('--------------------')
+             
+            affectation_pilote = {
+                'constat_id': record.id,
+                'direction_pilote_id': rec,
+                'origine_constat': record.origine,
+                'type_constat': record.type_constat, 
+                'action_id': action_record.id
+            }
 
-        record.send_mail_notif()
+            # print('********DIRECTEUR******',affectation_pilote.direction_pilote_id.directeur.user_id.login)
+            # print('******8REFERENT********8',affectation_pilote.direction_pilote_id.referent.user_id.login)
+            # affectation_template = ''
+            # affectation_pilote.send_mail_notif
+            affectation_record = self.env['pdca.affectation_pilote'].create(affectation_pilote)           
+        
+            print ('--------------------')
+            print(affectation_record)
+
+            print ('--------SHOULD BE SENT------------')
+
+        # record.send_mail_notif()
         return record
     
     def emails(self):
+        affects = self.env['pdca.affectation_pilote'].search([('constat_id','=',self.id)])
+        for aff in affects:
+            print('*************8DIRECT',aff.direction_pilote_id.directeur.user_id.login)
+            print('*************8DIRECT',aff.direction_pilote_id.referent.user_id.login)
         # print(self.direction_pilote.ids)
-        for rec in self.direction_pilote:
-            print (rec.id)
+        # for rec in self.direction_pilote:
+        #     print (rec.id)
+        # aff = self.env['affectation']
     
     @api.onchange('direction_pilote')
     def change_activite(self):
@@ -189,3 +218,19 @@ class Constat(models.Model):
             return {'domain': {'processus': processus_domain}}
         else:
             self.processus = False
+    
+    @api.onchange('direction_pilote')
+    def onchange_invisible_affectations(self):
+
+        if not self.affectations_ids:
+            print("FALLLLLLLLLLLLLLLSSSSSSSSSSSEEEE")
+        else:
+            print('TTTTTTTTTTTRRRRRRRRRRRUUUUUUUE')
+
+#method which if the affectation is not empty, it will be invisible
+def hide_affectations(self):
+    if self.affectations_ids:
+        return {'invisible': True}
+    else:
+        return {'invisible': False}
+    

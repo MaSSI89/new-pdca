@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.rule" id="pilote_actions_rule">
+        <field name="name">Actions : Mes propres Actions</field>
+        <field name="model_id" ref="Plan-d-amelioration.model_pdca_action" />
+        <field name="groups" eval="[(4, ref('Plan-d-amelioration.group_pdca_pilote'))]" />
+        <field name="domain_force">
+            [('pilote_id.user_id','=', user.id)]
+        </field>
+    </record>
+
+    <record model="ir.rule" id="administrateur_all_actions_rule">
+        <field name="name">Actions</field>
+        <field name="model_id" ref="Plan-d-amelioration.model_pdca_action" />
+        <field name="groups" eval="[(4, ref('Plan-d-amelioration.group_pdca_administrateur'))]" />
+  
+    </record>
+
+</odoo>

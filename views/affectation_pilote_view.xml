@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <form string="">
                 <header>
-                    <!-- <button name="ajouter_action" type="object" string="Definir une action"  -->
-                    <!-- /> -->
+                    <button name="ajouter_action" type="object" string="Definir l'action" 
+                    />
                     <!-- <button name="update_action" type="object" string="Renseigner taux d'avancement"/> -->
                 </header>
                 <sheet>
@@ -17,7 +17,7 @@
                         <field name="origine_constat" readonly="1"/>
                         <field name="type_constat" readonly="1" />
                         <field name="direction_pilote_id" readonly="1" options="{'no_open':True, 'no_create':True}" />
-                        <field name="pilote_id" options="{'no_create': True}" domain="[('direction_id','=',direction_pilote_id)]"/>
+                        <field name="pilote_id"/>
                         
                     </group>
                     <group>
@@ -32,9 +32,11 @@
         <field name="name">pdca.affectation_pilote.view.tree</field>
         <field name="model">pdca.affectation_pilote</field>
         <field name="arch" type="xml">
-            <tree string="">
+            <tree >
                 
                 <field name="constat_id" />
+                <field name="direction_pilote_id" readonly="1" />
+                <field name="pilote_id" />
                 <field name="pilote_id" />
                 <field name="action_id" />
             </tree>
@@ -50,6 +52,6 @@
     
     <menuitem id="pdca_affectation_pilote_menu" name="Affectation Pilote"
         action="affectation_pilote_action" parent="pdca_constat_menu"
-        sequence="2"/>
+        sequence="2" groups="group_pdca_referent" />
 
 </odoo>

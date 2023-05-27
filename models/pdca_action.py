@@ -18,6 +18,11 @@ class Action(models.Model):
     pilote_id = fields.Many2one('pdca.employe',"Pilote d'action")
     constat_id=fields.Many2one('pdca.constat',string="Constat")
     direction_id = fields.Many2one('pdca.direction',string="Direction ")
+    statut_approbation = fields.Selection([
+        ('pasEncore', 'Pas Encore'),
+        ('approuve', 'Approuve'),
+        ('Disapprouve', 'Disapprouve')
+    ],default="pasEncore")
     
     type_risque=fields.Selection([
         ('qualite','Qualite'),
@@ -36,7 +41,7 @@ class Action(models.Model):
                             ('enattenteaproba',"En attente d'approbation"),
                             ('approuve','Approuve'),
                             ('realise','Realise'),
-                            ('solde','Solde')],default='endefinition',string="Statu")
+                            ('solde','Solde')],default='nonentamne',string="Statu")
 
     def approuver_action(self):
         if self.taux_avancement == 100:
@@ -88,14 +93,16 @@ class Action(models.Model):
 
         # if result.constat_id and result.id not in result.constat_id.action_ids.ids:
         #     result.constat_id.write({'action_ids':[(4,result.id)]})
-        # template = 'Plan-d-amelioration.action_definie_template'            
-        # result.send_mail_notifiction(template, self.constat_id.create_uid.email)
+        template = 'Plan-d-amelioration.action_definie_template'            
+        result.send_mail_notifiction(template, self.constat_id.create_uid.email)
         return result
     
     def write(self, values):
+        if 'status' not in values:
+            values['status'] = 'enattentevalidation'
         res = super().write(values)
         template = 'Plan-d-amelioration.action_definie_template'
-        # self.send_mail_notifiction(template, self.constat_id.create_uid.email)
+        self.send_mail_notifiction(template, self.constat_id.create_uid.email)
         return res
     
  

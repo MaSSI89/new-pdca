@@ -18,3 +18,5 @@ class Employe(models.Model):
             self.email = self.login
         else :
             self.email = False
+    
+    

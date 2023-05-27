@@ -30,16 +30,16 @@
                         <field name="origine" />         
                     </group>
                     <group>
-                        <field name="direction_concerne" />
-                        <field name="direction_pilote" widget="many2many_tags"/>
-                        <field name="activite" widget="many2many_tags" />
-                        <field name="processus" widget="many2many_tags" />
+                        <field name="direction_concerne" options="{'no_create': True,'no_open':True}"  />
+                        <field name="direction_pilote" widget="many2many_tags" options="{'no_create': True,'no_open':True}"/>
+                        <field name="activite" widget="many2many_tags" options="{'no_create': True, 'no_open':True}" />
+                        <field name="processus" widget="many2many_tags" options="{'no_create': True, 'no_open':True}" />
                     </group>
                     <group>
-                        <field name="genere_action" />
+                        <field name="genere_action" attrs="{'invisible': [('genere_action','=', False)]}" />
                     </group>
                     <group >
-                        <!-- <field name="status" /> -->
+                        <field name="affectations_ids" attrs="{'invisible': [('affectations_ids','=', False)]}" readonly="1" />
                     </group>
                 </sheet>
             </form>
@@ -55,13 +55,14 @@
                 <field name="name" />
                 <field name="type_constat" />
                 
-                <field name="direction_concerne" widget="many2onetags" options="{'no_open': True}"/>
-                <field name="direction_pilote" widget="many2onetags" options="{'no_open': True}"/>
+                <field name="direction_concerne"  options="{'no_open': True}"/>
+                <field name="direction_pilote"  options="{'no_open': True}"/>
                 <field name="activite" />
                 <field name="processus" />
                 <field name="status" decoration-danger="status == 'annule'" decoration-success="status == 'solde'" decoration-primary="status == 'encours'" decoration-muted="status == 'ouvert'" decoration-warning="status == 'traite'"    widget="badge"/>
-                <field name="action_ids">
-                </field>
+                <field name="affectations_ids"/>
+                <field name="action_ids" />
+                
             </tree>
         </field>
     </record>
@@ -73,7 +74,7 @@
     </record>
 
     <menuitem id="pdca_constat_menu" name="Constat" 
-        parent="pdca_root_menu" sequence="40"/>
+        parent="pdca_root_menu" sequence="40" groups="group_pdca_directeur"/>
     <menuitem
         id="pdca_constat_submenu"
         name="Constat"

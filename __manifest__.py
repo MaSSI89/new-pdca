@@ -16,7 +16,7 @@
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/14.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
-    'category': 'Services/pdca',
+    'category': 'pdca',
     'version': '0.1',
     'installable': True,
     # any module necessary for this one to work correctly
@@ -24,7 +24,9 @@
 
     # always loaded
     'data': [
+        'security/groups.xml',
         'security/ir.model.access.csv',
+        'security/security_rules.xml',
         'views/direction_view.xml',
         'views/unite_view.xml',
         'views/processus_view.xml',
@@ -39,6 +41,7 @@
         'data/constat_mails.xml',
         'data/action_mails.xml',
         'data/affectation_pilote_mails.xml',
+        'data/affectation_direction_pilote_mails.xml',
 
     ],
     # only loaded in demonstration mode
